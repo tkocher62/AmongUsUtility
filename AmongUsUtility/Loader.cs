@@ -47,6 +47,8 @@ namespace Loader
 			StreamWriter standardOutput = new StreamWriter(fileStream, encoding);
 			standardOutput.AutoFlush = true;
 			System.Console.SetOut(standardOutput);
+
+			TcpClient.Init("127.0.0.1", 7878);
 		}
 	}
 }

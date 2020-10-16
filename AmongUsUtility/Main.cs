@@ -1,9 +1,11 @@
-﻿using System;
+﻿using AmongUsUtility.DataObjects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using Type = AmongUsUtility.DataObjects.Type;
 
 namespace AmongUsUtility
 {
@@ -29,7 +31,13 @@ namespace AmongUsUtility
 
 			if (Input.GetKeyDown(KeyCode.F1))
 			{
-				GetRandomPlayer().HIHKBDLNLMN.CmdReportDeadBody(null);
+				//GetRandomPlayer().HIHKBDLNLMN.CmdReportDeadBody(null);
+
+				TcpClient.SendData(new UpdateData()
+				{
+					type = Type.win.ToString(),
+					username = "testing"
+				});
 			}
 			else if (Input.GetKeyDown(KeyCode.F2))
 			{
@@ -64,7 +72,11 @@ namespace AmongUsUtility
 				// LMLKMLAHPDO - isYou
 				// LODLBBJNGKB - isImposter
 
-				// register win for each a
+				TcpClient.SendData(new UpdateData()
+				{
+					type = Type.win.ToString(),
+					username = a.AMBMBLABCCO
+				});
 
 				System.Console.WriteLine(" - " + a.AMBMBLABCCO);
 			}

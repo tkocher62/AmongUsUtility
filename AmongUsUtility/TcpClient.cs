@@ -1,42 +1,35 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
-namespace AmongUsBot
+namespace AmongUsUtility
 {
-	class Tcp
+	class TcpClient
 	{
-		private string ip;
-		private int port;
+		private static string ip;
+		private static int port;
+
 		internal static Socket socket;
 
-		public Tcp(string ip, int port)
-		{
-			this.ip = ip;
-			this.port = port;
-		}
-
-		// MODIFY THIS TO START A SERVER INSTEAD OF CONNECT TO ONE
-
-		public void Init()
+		internal static void Init(string _ip, int _port)
 		{
 			try
 			{
+				ip = _ip;
+				port = _port;
+
 				new Thread(AttemptConnection).Start();
 			}
 			catch (Exception x)
 			{
-				Console.WriteLine("Failed to connect to bot.");
+				System.Console.WriteLine("Connection attempt failed: " + x.Message);
 			}
 		}
 
-		private void AttemptConnection()
+		private static void AttemptConnection()
 		{
 			while (!IsConnected())
 			{
@@ -50,13 +43,14 @@ namespace AmongUsBot
 				catch (Exception x)
 				{
 					// Failed to connect
-					Console.WriteLine("Failed to connect to AmongUsBot, retrying in 10 seconds...");
+					System.Console.WriteLine(x.Message);
+					//System.Console.WriteLine("Failed to connect to server, retrying in 10 seconds...");
 				}
 				Thread.Sleep(10000);
 			}
 		}
 
-		private void Listen()
+		private static void Listen()
 		{
 			while (IsConnected())
 			{
@@ -65,28 +59,26 @@ namespace AmongUsBot
 					byte[] a = new byte[1000];
 					socket.Receive(a);
 					JObject o = (JObject)JToken.FromObject(JsonConvert.DeserializeObject(Encoding.UTF8.GetString(a)));
-
-					TcpCommandHandler.HandleCommand(o);
 				}
 				catch (Exception x)
 				{
-					Console.WriteLine("AmongUsBot listener error: " + x.Message);
+					System.Console.WriteLine("Listener error: " + x.Message);
 				}
 			}
 			new Thread(AttemptConnection).Start();
 		}
 
-		public void SendData(object data)
+		internal static void SendData(object data)
 		{
 			socket.Send(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data)));
 		}
 
-		public void SendData(byte[] data)
+		internal static void SendData(byte[] data)
 		{
 			socket.Send(data);
 		}
 
-		public bool IsConnected()
+		internal static bool IsConnected()
 		{
 			if (socket == null)
 			{

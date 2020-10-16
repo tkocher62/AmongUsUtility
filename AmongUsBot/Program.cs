@@ -12,7 +12,7 @@ namespace AmongUsBot
 	class Program
 	{
 		private DiscordSocketClient client;
-		private static Tcp tcp;
+		private static TcpServer tcp;
 		private string dataPath;
 		private Dictionary<string, ulong> sync;
 
@@ -20,19 +20,24 @@ namespace AmongUsBot
 
 		public async Task InitBot()
 		{
-			Console.WriteLine("Connecting to MySQL...");
-			//SQL.Connect(UUSDUYVBR("YW1vbmd1cw"), UUSDUYVBR("YlloXlo/TTJ2LVomUmgrRi1GMmtLdzMkYipeOFZhbkw"));
+			Console.Write("Connecting to MySQL...");
+			SQL.Connect(UUSDUYVBR("YW1vbmd1cw=="), UUSDUYVBR("YlloXlo/TTJ2LVomUmgrRi1GMmtLdzMkYipeOFZhbkw="));
+			Console.WriteLine(" Done!");
 
-			Console.WriteLine("Starting server...");
-			// START SERVER, FIX TCP CLASS
+			Console.Write("Starting server...");
+			tcp = new TcpServer("127.0.0.1", 7878);
+			tcp.Init();
+			Console.WriteLine(" Done!");
 
-			Console.WriteLine("Verifying filesystem...");
+			Console.Write("Verifying filesystem...");
 			dataPath = Path.Combine(Path.Combine(Directory.GetCurrentDirectory(), "path"), "usernameDiscordSync.json");
 			if (!Directory.Exists("data")) Directory.CreateDirectory("path");
 			if (!File.Exists(dataPath)) File.WriteAllText(dataPath, "{}");
+			Console.WriteLine(" Done!");
 
-			Console.WriteLine("Loading syncs...");
+			Console.Write("Loading syncs...");
 			sync = JsonConvert.DeserializeObject<Dictionary<string, ulong>>(File.ReadAllText(dataPath));
+			Console.WriteLine(" Done!");
 
 			Console.ReadLine();
 
