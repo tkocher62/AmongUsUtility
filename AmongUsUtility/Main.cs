@@ -30,9 +30,7 @@ namespace AmongUsUtility
 
 			if (Input.GetKeyDown(KeyCode.F1))
 			{
-				//GetRandomPlayer().HIHKBDLNLMN.CmdReportDeadBody(null);
-
-				Process.Start("AmongUsSQL.exe", "wins todd");
+				GetRandomPlayer().HIHKBDLNLMN.CmdReportDeadBody(null);
 			}
 			else if (Input.GetKeyDown(KeyCode.F2))
 			{
@@ -66,6 +64,9 @@ namespace AmongUsUtility
 				// AMBMBLABCCO - name
 				// LMLKMLAHPDO - isYou
 				// LODLBBJNGKB - isImposter
+
+				// cluster this
+				Process.Start("AmongUsSQL.exe", $"wins {a.AMBMBLABCCO}");
 
 				System.Console.WriteLine(" - " + a.AMBMBLABCCO);
 			}

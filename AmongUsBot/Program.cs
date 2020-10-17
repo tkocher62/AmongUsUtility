@@ -13,7 +13,10 @@ namespace AmongUsBot
 	{
 		private DiscordSocketClient client;
 		private string dataPath;
-		private Dictionary<string, ulong> sync;
+		private Dictionary<ulong, string> sync;
+
+		private string prefix = ">";
+		private ulong cyanox = 111676166556917760;
 
 		public static void Main(string[] args) => new Program().InitBot().GetAwaiter().GetResult();
 
@@ -35,7 +38,7 @@ namespace AmongUsBot
 			Console.WriteLine(" Done!");
 
 			Console.Write("Loading syncs...");
-			sync = JsonConvert.DeserializeObject<Dictionary<string, ulong>>(File.ReadAllText(dataPath));
+			sync = JsonConvert.DeserializeObject<Dictionary<ulong, string>>(File.ReadAllText(dataPath));
 			Console.WriteLine(" Done!\n");
 
 			client = new DiscordSocketClient();
@@ -62,36 +65,89 @@ namespace AmongUsBot
 		{
 			if (context.Author.IsBot) return;
 			string msg = context.Content.ToLower();
-			Console.WriteLine(msg);
-			if (msg.StartsWith(";register"))
+			if (msg.StartsWith($"{prefix}register"))
 			{
-				string username = msg.Replace(";register", "").Trim();
-				if (SQL.GetPlayerData(username).name == null)
+				string username = msg.Replace($"{prefix}register", "").Trim();
+				if (username.Length != 0)
 				{
-					SQL.AddUser(username);
-					sync.Add(username, context.Author.Id);
-					File.WriteAllText(dataPath, JsonConvert.SerializeObject(sync, Formatting.Indented));
-					await context.Channel.SendMessageAsync($"Account registered with username '{username}'.");
+					if (!sync.ContainsKey(context.Author.Id))
+					{
+						if (SQL.GetPlayerData(username).name == null)
+						{
+							SQL.AddUser(username);
+							sync.Add(context.Author.Id, username);
+							File.WriteAllText(dataPath, JsonConvert.SerializeObject(sync, Formatting.Indented));
+							await context.Channel.SendMessageAsync($"Account registered with username '{username}'.");
+						}
+						else
+						{
+							await context.Channel.SendMessageAsync("Error: Username is not available.");
+						}
+					}
+					else
+					{
+						await context.Channel.SendMessageAsync($"You have already registered the username '{sync[context.Author.Id]}'.");
+					}
 				}
 				else
 				{
-					await context.Channel.SendMessageAsync("Error: Username is not available.");
+					await context.Channel.SendMessageAsync($"You must provide a username.");
+					return;
 				}
 			}
-			else if (msg.StartsWith(";unregister"))
+			else if (msg == $"{prefix}unregister")
 			{
-				string username = msg.Replace(";unregister", "").Trim();
-				if (SQL.GetPlayerData(username).name != null)
+				string username = sync[context.Author.Id];
+				if (username != string.Empty)
 				{
-					SQL.DeleteUser(username);
-					sync.Remove(username);
-					File.WriteAllText(dataPath, JsonConvert.SerializeObject(sync));
-					await context.Channel.SendMessageAsync($"Account '{username}' unregistered.");
+					if (SQL.GetPlayerData(username).name != null)
+					{
+						SQL.DeleteUser(username);
+						sync.Remove(context.Author.Id);
+						File.WriteAllText(dataPath, JsonConvert.SerializeObject(sync, Formatting.Indented));
+						await context.Channel.SendMessageAsync($"Account '{username}' unregistered.");
+					}
 				}
 				else
 				{
 					await context.Channel.SendMessageAsync("Error: You are not registered.");
 				}
+			}
+			else if (msg == $"{prefix}stats")
+			{
+				if (sync.ContainsKey(context.Author.Id))
+				{
+					string username = sync[context.Author.Id];
+					PlayerData data = SQL.GetPlayerData(username);
+
+					EmbedBuilder builder = new EmbedBuilder();
+
+					builder.WithTitle($"{context.Author.Username} ({username})'s Stats");
+					builder.AddField("Wins", data.wins, false);
+					builder.AddField("Kills", data.kills, false);
+					builder.AddField("Deaths", data.deaths, false);
+					builder.AddField("Tasks Completed", data.tasksCompleted, false);
+					//builder.WithThumbnailUrl("https://i.dlpng.com/static/png/6481182_preview.png");
+					builder.WithCurrentTimestamp();
+					builder.WithFooter("Among Us Leaderboard by Cyanox");
+					builder.WithColor(Color.Green);
+					await context.Channel.SendMessageAsync("", false, builder.Build());
+				}
+				else
+				{
+					await context.Channel.SendMessageAsync("Error: You must register a username to view your stats.");
+				}
+			}
+			else if (msg.StartsWith($"{prefix}forcedel") && context.Author.Id == cyanox)
+			{
+				string username = msg.Replace($"{prefix}forcedel", "").Trim();
+				SQL.DeleteUser(username);
+				await context.Channel.SendMessageAsync($"Account '{username}' deleted.");
+			}
+			else if (msg.StartsWith($"{prefix}setstat") && context.Author.Id == cyanox)
+			{
+				string[] split = msg.Replace($"{prefix}forcedel", "").Trim().Split(' ');
+				// not done lol
 			}
 			else if (msg == "fart")
 			{
