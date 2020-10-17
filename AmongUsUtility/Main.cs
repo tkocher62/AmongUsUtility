@@ -1,11 +1,10 @@
-﻿using AmongUsUtility.DataObjects;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
-using Type = AmongUsUtility.DataObjects.Type;
 
 namespace AmongUsUtility
 {
@@ -33,11 +32,7 @@ namespace AmongUsUtility
 			{
 				//GetRandomPlayer().HIHKBDLNLMN.CmdReportDeadBody(null);
 
-				TcpClient.SendData(new UpdateData()
-				{
-					type = Type.win.ToString(),
-					username = "testing"
-				});
+				Process.Start("AmongUsSQL.exe", "wins todd");
 			}
 			else if (Input.GetKeyDown(KeyCode.F2))
 			{
@@ -71,12 +66,6 @@ namespace AmongUsUtility
 				// AMBMBLABCCO - name
 				// LMLKMLAHPDO - isYou
 				// LODLBBJNGKB - isImposter
-
-				TcpClient.SendData(new UpdateData()
-				{
-					type = Type.win.ToString(),
-					username = a.AMBMBLABCCO
-				});
 
 				System.Console.WriteLine(" - " + a.AMBMBLABCCO);
 			}

@@ -1,9 +1,4 @@
 ﻿using MySql.Data.MySqlClient;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AmongUsBot
 {
@@ -31,11 +26,11 @@ namespace AmongUsBot
 
 		internal static string GetServerVersion() => con.ServerVersion;
 
-		internal static PlayerData GetPlayerData(string name)
+		internal static PlayerData GetPlayerData(string username)
 		{
 			if (IsConnected())
 			{
-				MySqlDataReader rdr = new MySqlCommand($"SELECT * FROM player_data WHERE name = '{name}'", con).ExecuteReader();
+				MySqlDataReader rdr = new MySqlCommand($"SELECT * FROM player_data WHERE name = '{username}'", con).ExecuteReader();
 				PlayerData p = new PlayerData();
 				while (rdr.Read())
 				{
@@ -51,6 +46,36 @@ namespace AmongUsBot
 			return null;
 		}
 
+		internal static int GetPlayerData(string username, string key)
+		{
+			if (IsConnected())
+			{
+				MySqlDataReader rdr = new MySqlCommand($"SELECT * FROM player_data WHERE name = '{username}'", con).ExecuteReader();
+				PlayerData p = new PlayerData();
+				while (rdr.Read())
+				{
+					p.name = rdr.GetString(0);
+					p.wins = rdr.GetInt32(1);
+					p.kills = rdr.GetInt32(2);
+					p.deaths = rdr.GetInt32(3);
+					p.tasksCompleted = rdr.GetInt32(4);
+				}
+				rdr.Close();
+				switch (key)
+				{
+					case "wins":
+						return p.wins;
+					case "kills":
+						return p.kills;
+					case "deaths":
+						return p.deaths;
+					case "tasks":
+						return p.tasksCompleted;
+				}
+			}
+			return -1;
+		}
+
 		internal static void Query(string cmd)
 		{
 			if (IsConnected())
@@ -59,7 +84,7 @@ namespace AmongUsBot
 			}
 		}
 
-		internal static void UpdatePlayerData(string name, StatKey key, int value)
+		internal static void UpdatePlayerData(string name, string key, int value)
 		{
 			Query($"UPDATE player_data SET {key} = {value} WHERE name = '{name}'");
 		}

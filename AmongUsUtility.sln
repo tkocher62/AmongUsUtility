@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AmongUsUtility", "AmongUsUt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AmongUsBot", "AmongUsBot\AmongUsBot.csproj", "{81265B81-508E-4A1D-98F1-F98A84046284}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AmongUsSQL", "AmongUsSQL\AmongUsSQL.csproj", "{D9828B86-C630-474D-BB84-AD4B3DA74401}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{81265B81-508E-4A1D-98F1-F98A84046284}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81265B81-508E-4A1D-98F1-F98A84046284}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81265B81-508E-4A1D-98F1-F98A84046284}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9828B86-C630-474D-BB84-AD4B3DA74401}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9828B86-C630-474D-BB84-AD4B3DA74401}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9828B86-C630-474D-BB84-AD4B3DA74401}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9828B86-C630-474D-BB84-AD4B3DA74401}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

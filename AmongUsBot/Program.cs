@@ -12,7 +12,6 @@ namespace AmongUsBot
 	class Program
 	{
 		private DiscordSocketClient client;
-		private static TcpServer tcp;
 		private string dataPath;
 		private Dictionary<string, ulong> sync;
 
@@ -24,29 +23,26 @@ namespace AmongUsBot
 			SQL.Connect(UUSDUYVBR("YW1vbmd1cw=="), UUSDUYVBR("YlloXlo/TTJ2LVomUmgrRi1GMmtLdzMkYipeOFZhbkw="));
 			Console.WriteLine(" Done!");
 
-			Console.Write("Starting server...");
-			tcp = new TcpServer("127.0.0.1", 7878);
-			tcp.Init();
-			Console.WriteLine(" Done!");
-
 			Console.Write("Verifying filesystem...");
 			dataPath = Path.Combine(Path.Combine(Directory.GetCurrentDirectory(), "path"), "usernameDiscordSync.json");
 			if (!Directory.Exists("data")) Directory.CreateDirectory("path");
 			if (!File.Exists(dataPath)) File.WriteAllText(dataPath, "{}");
 			Console.WriteLine(" Done!");
 
-			Console.Write("Loading syncs...");
-			sync = JsonConvert.DeserializeObject<Dictionary<string, ulong>>(File.ReadAllText(dataPath));
+			Console.Write("Starting server...");
+			TcpServer tcp = new TcpServer("127.0.0.1", 7878);
+			tcp.Init();
 			Console.WriteLine(" Done!");
 
-			Console.ReadLine();
+			Console.Write("Loading syncs...");
+			sync = JsonConvert.DeserializeObject<Dictionary<string, ulong>>(File.ReadAllText(dataPath));
+			Console.WriteLine(" Done!\n");
 
-			Console.WriteLine("Initializing Discord...");
 			client = new DiscordSocketClient();
 			client.Log += Log;
 			client.Ready += Ready;
 			client.MessageReceived += HandleCommand;
-			await client.LoginAsync(TokenType.Bot, "token");
+			await client.LoginAsync(TokenType.Bot, "NzY2NzE1NjM3NzI0MzQ4NDM3.X4nZlA.YWe7iYgaWDsval3Z_SNQTaN9RpQ");
 			await client.StartAsync();
 
 			await Task.Delay(-1);
@@ -66,20 +62,44 @@ namespace AmongUsBot
 		{
 			if (context.Author.IsBot) return;
 			string msg = context.Content.ToLower();
-			if (msg == "register")
+			Console.WriteLine(msg);
+			if (msg.StartsWith(";register"))
 			{
-				string username = msg.Replace("register", "").Trim();
+				string username = msg.Replace(";register", "").Trim();
 				if (SQL.GetPlayerData(username).name == null)
 				{
 					SQL.AddUser(username);
 					sync.Add(username, context.Author.Id);
-					File.WriteAllText(dataPath, JsonConvert.SerializeObject(sync));
-					await context.Channel.SendMessageAsync($"Account registered with username '{username}'");
+					File.WriteAllText(dataPath, JsonConvert.SerializeObject(sync, Formatting.Indented));
+					await context.Channel.SendMessageAsync($"Account registered with username '{username}'.");
 				}
 				else
 				{
 					await context.Channel.SendMessageAsync("Error: Username is not available.");
 				}
+			}
+			else if (msg.StartsWith(";unregister"))
+			{
+				string username = msg.Replace(";unregister", "").Trim();
+				if (SQL.GetPlayerData(username).name != null)
+				{
+					SQL.DeleteUser(username);
+					sync.Remove(username);
+					File.WriteAllText(dataPath, JsonConvert.SerializeObject(sync));
+					await context.Channel.SendMessageAsync($"Account '{username}' unregistered.");
+				}
+				else
+				{
+					await context.Channel.SendMessageAsync("Error: You are not registered.");
+				}
+			}
+			else if (msg == "fart")
+			{
+				await context.Channel.SendMessageAsync("**pfffpfpfpfpfp**");
+			}
+			else if (msg == "poop")
+			{
+				await context.Channel.SendMessageAsync("**pppft**");
 			}
 		}
 	}

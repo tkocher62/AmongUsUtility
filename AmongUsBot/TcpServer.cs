@@ -1,13 +1,10 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace AmongUsBot
 {
@@ -71,10 +68,7 @@ namespace AmongUsBot
 					JObject o = (JObject)JToken.FromObject(JsonConvert.DeserializeObject(responseData));
 					TcpCommandHandler.HandleCommand(o);
 				}
-				catch (Exception x)
-				{
-					Console.WriteLine("AmongUsBot listener error: " + x.Message);
-				}
+				catch { }
 			}
 			new Thread(AcceptClient).Start();
 		}
