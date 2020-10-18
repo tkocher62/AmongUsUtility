@@ -11,9 +11,9 @@ namespace AmongUsBot
 {
 	class Program
 	{
-		private DiscordSocketClient client;
+		internal static DiscordSocketClient client;
 		private string dataPath;
-		private Dictionary<ulong, string> sync;
+		internal static Dictionary<ulong, string> sync;
 
 		private string prefix = ">";
 		private ulong cyanox = 111676166556917760;
@@ -124,9 +124,9 @@ namespace AmongUsBot
 
 					builder.WithTitle($"{context.Author.Username} ({username})'s Stats");
 					builder.AddField("Wins", data.wins, false);
-					builder.AddField("Kills", data.kills, false);
-					builder.AddField("Deaths", data.deaths, false);
-					builder.AddField("Tasks Completed", data.tasksCompleted, false);
+					//builder.AddField("Kills", data.kills, false);
+					//builder.AddField("Deaths", data.deaths, false);
+					//builder.AddField("Tasks Completed", data.tasksCompleted, false);
 					//builder.WithThumbnailUrl("https://i.dlpng.com/static/png/6481182_preview.png");
 					builder.WithCurrentTimestamp();
 					builder.WithFooter("Among Us Leaderboard by Cyanox");

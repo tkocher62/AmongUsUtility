@@ -10,7 +10,7 @@
 			tcp.SendData(new Data()
 			{
 				type = args[0],
-				username = args[1]
+				username = args.Length == 2 ? args[1] : null
 			});
 		}
 	}

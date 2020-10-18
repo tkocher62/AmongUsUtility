@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -13,7 +14,7 @@ namespace AmongUsBot
 		private string ip;
 		private int port;
 		internal static TcpListener listener;
-		private static TcpClient client;
+		private static List<TcpClient> clients = new List<TcpClient>();
 
 		public TcpServer(string ip, int port)
 		{
@@ -42,20 +43,22 @@ namespace AmongUsBot
 			{
 				try
 				{
-					client = listener.AcceptTcpClient();
+					TcpClient client = listener.AcceptTcpClient();
+					clients.Add(client);
 
-					new Thread(Listen).Start();
+					new Thread(Listen).Start(client);
 				}
 				catch (Exception x)
 				{
 					Console.WriteLine("Failed to create server, retrying in 10 seconds...");
+					Thread.Sleep(10000);
 				}
-				Thread.Sleep(10000);
 			}
 		}
 
-		private void Listen()
+		private void Listen(object c)
 		{
+			TcpClient client = (TcpClient)c;
 			while (client.Connected)
 			{
 				try
@@ -70,7 +73,7 @@ namespace AmongUsBot
 				}
 				catch { }
 			}
-			new Thread(AcceptClient).Start();
+			clients.Remove(client);
 		}
 	}
 }
