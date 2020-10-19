@@ -14,6 +14,7 @@ namespace AmongUsBot
 			try
 			{
 				string type = (string)o["type"];
+				string args = (string)o["args"];
 				Console.WriteLine(o);
 				if (type == "enabletalk")
 				{
@@ -25,9 +26,8 @@ namespace AmongUsBot
 				}
 				else if (type == "wins")
 				{
-					string username = (string)o["username"];
-					Console.WriteLine(username);
-					foreach (string user in username.Split('|'))
+					Console.WriteLine(args);
+					foreach (string user in args.Split('|'))
 					{
 						Console.WriteLine("giving user '" + user + "' a win");
 						SQL.UpdatePlayerData(user, type, SQL.GetPlayerData(user, type) + 1);
@@ -35,8 +35,7 @@ namespace AmongUsBot
 				}
 				else
 				{
-					string username = (string)o["username"];
-					SQL.UpdatePlayerData(username, type, SQL.GetPlayerData(username, type) + 1);
+					SQL.UpdatePlayerData(args, type, SQL.GetPlayerData(args, type) + 1);
 				}
 			}
 			catch (Exception x)

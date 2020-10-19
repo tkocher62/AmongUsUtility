@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace AmongUsUtility
@@ -12,6 +8,25 @@ namespace AmongUsUtility
 	class Main
 	{
 		private static bool isGameStarted = false;
+
+		private static string BuildNames(bool checkImposter = false)
+		{
+			string b = string.Empty;
+			for (int i = 0; i < GameData.Instance.AllPlayers.Count; i++)
+			{
+				if (checkImposter)
+				{
+					var player = new PlayerInfoProxy(GameData.Instance.AllPlayers[i]);
+					if (player.IsImpostor) b += player.PlayerName;
+				}
+				else
+				{
+					b += new PlayerInfoProxy(GameData.Instance.AllPlayers[i]).PlayerName;
+				}
+				if (i != GameData.Instance.AllPlayers.Count - 1) b += "|";
+			}
+			return b;
+		}
 
 		private static GameData.IHEKEPMDGIJ GetRandomPlayer()
 		{
@@ -94,7 +109,7 @@ namespace AmongUsUtility
 			}
 			System.Console.WriteLine(b);
 			Process.Start("AmongUsSQL.exe", $"wins {b}");
-			Process.Start("AmongUsSQL.exe", $"enabletalk");
+			Process.Start("AmongUsSQL.exe", $"enabletalk {BuildNames()}");
 			isGameStarted = false;
 		}
 
@@ -118,7 +133,7 @@ namespace AmongUsUtility
 			Hooks.o_CallMeeting(@this);
 
 			System.Console.WriteLine("starting meeting - 1");
-			Process.Start("AmongUsSQL.exe", $"enabletalk");
+			Process.Start("AmongUsSQL.exe", $"enabletalk {BuildNames(true)}");
 		}
 
 		public static void EndMeeting(IntPtr @this)
@@ -126,7 +141,7 @@ namespace AmongUsUtility
 			Hooks.o_EndMeeting(@this);
 
 			System.Console.WriteLine("ending meeting");
-			Process.Start("AmongUsSQL.exe", "disabletalk");
+			Process.Start("AmongUsSQL.exe", $"disabletalk {BuildNames(true)}");
 		}
 
 		public static void StartGame(IntPtr @this)
@@ -134,7 +149,7 @@ namespace AmongUsUtility
 			Hooks.o_StartGame(@this);
 
 			System.Console.WriteLine("starting game - " + isGameStarted);
-			Process.Start("AmongUsSQL.exe", isGameStarted ? "enabletalk" : "disabletalk");
+			Process.Start("AmongUsSQL.exe", $"{(isGameStarted ? "enabletalk" : "disabletalk")} {BuildNames()}");
 			isGameStarted = true;
 		}
 	}
